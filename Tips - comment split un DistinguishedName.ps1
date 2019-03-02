@@ -25,12 +25,11 @@ $result[-1]
 
 # ex. d'Utilisation 
 $AgeMax = "90"
-$import = Get-ADComputer -filter * -Properties Name,DistinguishedName,LastLogonDate |
+$DateLimite = (get-Date).AddDays(-$AgeMax)
+
+$Computers = Get-ADComputer -filter * -Properties Name,DistinguishedName,LastLogonDate -filter {LastLogonDate -lt $DateLimite} |
             Select-Object Name,
                       DistinguishedName,
                       LastLogonDate,
                       @{ Label = "dif"; Expression = {((Get-Date) - $_.lastlogondate).days }}, # calcul nbre de jours depuis la dernière connexion / aujourd'hui
-                      @{ Label = "OU" ; Expression = {($_.DistinguishedName -split ",",2)[1]}}| # OU dans laquelle se situe la machine
-            Where-Object { $_.dif -ge $AgeMax}
-# Nota : me semble que c'est pas top le where-object en 3 dans le pipe, alors qu'on pourrait filtrer dans la 1ère cmdlet avec -filter,  A TESTER
--filter ((Get-Date) - $_.lastlogondate).days -ge $AgeMax
+                      @{ Label = "OU" ; Expression = {($_.DistinguishedName -split ",",2)[1]} # OU dans laquelle se situe la machine
