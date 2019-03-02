@@ -26,7 +26,6 @@ $result[-1]
 # ex. d'Utilisation 
 $AgeMax = "90"
 $DateLimite = (get-Date).AddDays(-$AgeMax)
-
 $Computers = Get-ADComputer -filter * -Properties Name,DistinguishedName,LastLogonDate -filter {LastLogonDate -lt $DateLimite} |
             Select-Object Name,
                       DistinguishedName,
